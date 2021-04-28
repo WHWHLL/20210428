@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Hello React!</title>
+<!-- <script src="https://cdn.staticfile.org/react/16.4.0/umd/react.development.js"></script>
+<script src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"></script>
+<script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script> -->
+<style>
+	#div {
+		height: 200px;
+		border: 1px solid #999;
+		overflow: auto;
+		width: 400px;
+		background: antiquewhite;
+		box-sizing: border-box;
+	}
+
+	.wp {
+		border: 1px solid red;
+		width: 300px;
+		height: 300px;
+	}
+
+	.box {
+		background: green;    
+	}
+
+	.box.size{
+		width: 100px;
+		height: 100px;
+	}
+
+	.wp {
+    display: grid;
+}
+.box {
+    align-self: center;
+    justify-self: center;
+}
+</style>
+</head>
+<body>
+<!-- 构造函数创建组件 -->
+<!-- <div id="example"></div> -->
+<button id="button">button</button>
+<div id="div" >
+	<ul id="container"></ul>
+</div>
+<div class="wp">
+    <div class="box">123123</div>
+</div>
+<script>
+// <script type="text/babel">
+
+// class MyComponent extends React.Component {
+
+// constructor(){
+//   super()
+//   this.myInput = React.createRef();
+//   this.myInput1 = React.createRef();
+// }
+// // .React.createRef()在React 16.3版本后，使用此方法来创建ref。将其赋值给一个变量，通过ref挂载在dom节点或组件上，该ref的current属性将能拿到dom节点或组件的实例
+
+//   handleClick() {
+//     console.log('ref',this.refs,this.myInput1)
+//     // 使用原生的 DOM API 获取焦点
+//     this.refs.myInput.focus();
+//     this.myInput1.current.focus();
+//   }
+//   render() {
+//     //  当组件插入到 DOM 后，ref 属性添加一个组件的引用于到 this.refs
+//     return (
+//       <div>
+//         <input type="text" ref="myInput" />
+//         <input type="text" ref={this.myInput1} />
+//         <input
+//           type="button"
+//           value="点我输入框获取焦点"
+//           onClick={this.handleClick.bind(this)}
+//         />
+//       </div>
+//     );
+//   }
+// }
+ 
+
+// ReactDOM.render(  //把组件放到 div 里面去
+//   <MyComponent/>,
+//   document.getElementById('example')
+// );
+
+
+
+const total = 10000
+let arr = []
+for (let i = 0; i < total; i++) {
+	arr.push(~~(i) + ' The furthest distance in the world \
+	Is not between life and death \
+	But when I stand in front of you \
+	Yet you don"t know that I love you \
+	世界上最遥远的距离 \
+	不是  生与死 \
+	而是  我就站在你面前  你却不知道我爱你 \
+	The furthest distance in the world \
+	Is not when I stand in front of you \
+	Yet you can"t see my love \
+	But when undoubtedly knowing the love from both \
+	Yet cannot be together'.slice(0, 200 * Math.random()))
+}
+
+let start = 0
+let end = 19
+let ul = document.getElementById('container')
+let ulWrap = document.getElementById('div')
+let scrollTop = ulWrap.scrollTop
+let io = new IntersectionObserver((entires) => {
+	if (entires.length !== (end-start+1)) {
+		// console.log(entires, entires[0].target.dataset.index)
+		// console.log(scrollTop, ulWrap.scrollTop, end)
+		// console.log(entires[0].target.dataset.index)
+		entires.forEach((entire) => {
+			if ((Number(entire.target.dataset.index) >= (start+end) / 2 + 1) && (entire.isIntersecting) && scrollTop < ulWrap.scrollTop) {
+				if (end < 10000) {
+					start += 1
+					end += 1
+					let li = document.createElement('li')
+					li.innerHTML = arr[end]
+					li.setAttribute("data-index", end)
+					li.setAttribute("style", "height: 150px; overflow: hidden;")
+					io.observe(li)
+					let top = ul.style.paddingTop ? Number(ul.style.paddingTop.split('px')[0]) : 0
+					ul.setAttribute("style", `padding-top: ${top + 150}px`)
+					ul.appendChild(li)
+					ul.removeChild(ul.firstChild)
+					scrollTop = ulWrap.scrollTop
+				} else {
+					console.log("到底了")
+				}
+			} else if ((Number(entire.target.dataset.index) < (start+end) / 2 - 1) && (entire.isIntersecting) && scrollTop > ulWrap.scrollTop) {
+				if (start > 0) {
+					start -= 1
+					end -= 1
+					let li = document.createElement('li')
+					li.innerHTML = arr[start]
+					li.setAttribute("data-index", start)
+					li.setAttribute("style", "height: 150px; overflow: hidden;")
+					io.observe(li)
+					let top = ul.style.paddingTop ? Number(ul.style.paddingTop.split('px')[0]) : 0
+					ul.setAttribute("style", `padding-top: ${top - 150}px`)
+					ul.removeChild(ul.lastChild)
+					ul.insertBefore(li, ul.firstChild)
+					scrollTop = ulWrap.scrollTop
+				} else {
+					console.log("到顶了")
+				}
+			}
+		})
+	}
+}, [1])
+
+document.getElementById("button").addEventListener('click', () => {
+	for (let i = 0; i <= 19; i++) {
+		let li = document.createElement("li")
+		li.innerHTML = arr[i]
+		li.setAttribute("data-index", i)
+		li.setAttribute("style", "height: 150px; overflow: hidden;")
+		io.observe(li)
+		ul.appendChild(li)
+	}
+})
+</script>
+
+</body>
+</html>
